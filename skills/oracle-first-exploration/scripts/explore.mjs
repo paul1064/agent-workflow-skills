@@ -33,28 +33,30 @@ async function pool(tasks, n) {
 }
 
 const t0 = Date.now();
-const seen = new Map([[key(A.initial), []]]);
+// Pfade als Vorgänger-Kette (Knoten = { up, a }) statt als Kopie pro Zustand: Speicher bleibt O(Zustände).
+const pathOf = (n) => { const p = []; for (; n; n = n.up) p.push(n.a); return p.reverse(); };
+const seen = new Set([key(A.initial)]);
 const goals = [], traps = new Map(), used = new Set(), tried = new Set();
-let frontier = [{ state: A.initial, path: [] }], calls = 0, stop = false;
+let frontier = [{ state: A.initial, node: null }], calls = 0, stop = false;
 
 for (let d = 1; d <= DEPTH && frontier.length && !stop; d++) {
-  const jobs = frontier.flatMap(({ state, path }) => A.actions(state).map((a) => async () => {
+  const jobs = frontier.flatMap(({ state, node }) => A.actions(state).map((a) => async () => {
     if (stop) return;
     calls++; tried.add(a);
     const r = await A.step(state, a);
     if (!r) return;
     used.add(a);
-    const p = [...path, a], k = key(r.state);
+    const n = { up: node, a }, k = key(r.state);
     if (r.trap) {                                  // eine Falle pro (Aktion, Grund) melden, kürzester Pfad
       const tk = a + "\u0000" + r.trap, t = traps.get(tk);
-      if (t) t.n++; else traps.set(tk, { path: p, why: r.trap, n: 1 });
+      if (t) t.n++; else traps.set(tk, { path: pathOf(n), why: r.trap, n: 1 });
       return;
     }
-    if (r.goal) { goals.push({ path: p, note: r.note }); if (!ALL) stop = true; return; }
+    if (r.goal) { if (stop) return; goals.push({ path: pathOf(n), note: r.note }); if (!ALL) stop = true; return; }
     if (seen.has(k)) return;                       // Zyklus / schon bekannt
-    seen.set(k, p);
-    if (r.note) console.log(`d${d}  ${p.join(" > ")}\n     ${String(r.note).slice(0, 240)}`);
-    return { state: r.state, path: p };
+    seen.add(k);
+    if (r.note) console.log(`d${d}  ${pathOf(n).join(" > ")}\n     ${String(r.note).slice(0, 240)}`);
+    return { state: r.state, node: n };
   }));
   frontier = (await pool(jobs, CONC)).filter(Boolean);
   if (seen.size >= NODES) { console.log(`! Knotenbudget ${NODES} erreicht – Suche abgebrochen.`); break; }

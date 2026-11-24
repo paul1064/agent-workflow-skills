@@ -19,7 +19,7 @@ Gemessen an einem realen Web-Rätsel (verschlüsselter Tresor, ~200 Einträge, Z
 1. **Wahrheit lesen, nicht Oberfläche.** Quelltext, Netzwerk-Antworten, Config, Logs. Kommentare und „toter“ Code sind oft die eigentlichen Regeln. Hinweise im UI sind verlustbehaftet – sie können absichtlich auf einen Köder zeigen.
 2. **Orakel extrahieren.** Die kleinste Funktion nachbauen, die *Eingabe → Wirkung* beantwortet (Validierung, Entschlüsselung, Zustandsübergang, Endpunkt). Nur lesend; das Original bleibt unangetastet.
 3. **Orakel kalibrieren.** 2–3 bekannte Eingaben durchs Orakel *und* durchs Echtsystem schicken. Abweichung = Orakel falsch, nicht weitersuchen.
-4. **Adapter schreiben** (`initial`, `actions`, `step`, optional `key`) – Vorlage: `${CLAUDE_SKILL_DIR}/examples/toy-adapter.mjs`.
+4. **Adapter schreiben** (`initial`, `actions`, `step`, optional `key`) – Vorlage: `${CLAUDE_SKILL_DIR}/examples/toy-adapter.mjs`; weitere Muster im selben Ordner (Zahlenschloss, Labyrinth, API-Blättern, Konfig-Schalter).
 5. **Suchen:**
    ```bash
    node "${CLAUDE_SKILL_DIR}/scripts/explore.mjs" mein-adapter.mjs --depth 12 --nodes 5000
