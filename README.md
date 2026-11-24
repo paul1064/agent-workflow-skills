@@ -28,7 +28,7 @@ Danach lädt Claude die Skills automatisch, wenn die Aufgabe passt, oder direkt 
 node skills/oracle-first-exploration/scripts/explore.mjs skills/oracle-first-exploration/examples/toy-adapter.mjs
 ```
 
-Ausgabe: kürzester Pfad zum Ziel, gefundene Fallen (je einmal, mit Häufigkeit), nie wirksame Kandidaten, Statistik. Exit-Code 0 = Ziel gefunden, 1 = nicht gefunden, 2 = falscher Aufruf.
+Ausgabe: kürzester Pfad zum Ziel, gefundene Fallen (je einmal, mit Häufigkeit), nie wirksame Kandidaten, Statistik. Exit-Code 0 = Ziel gefunden, 1 = nicht gefunden, 2 = falscher Aufruf, 3 = unvollständig (abgebrochen oder Schritte fehlgeschlagen).
 
 Weitere Beispiele im selben Ordner: `zahlenschloss.mjs`, `labyrinth.mjs`, `api-blaettern.mjs`, `config-schalter.mjs`.
 
@@ -42,6 +42,25 @@ An einem Web-Rätsel mit verschlüsseltem Tresor (~200 Einträge, PBKDF2) und Zu
 - 4⁴-Wegelabyrinth: 0,3 s statt bis zu 256 Handversuchen.
 - 9-Schritt-Pfad zum versteckten Endlevel: 1,4 s mit dem generischen Explorer.
 - Erkannt: ein Köder (Hinweis führt zu lesbarem Klartext ohne Wirkung) und eine Schleife mit 10¹⁵ Runden ohne Belohnung.
+
+## Abbruch und Wiederaufnahme
+
+```bash
+node skills/oracle-first-exploration/scripts/explore.mjs mein-adapter.mjs --checkpoint lauf.ck
+```
+
+Mit `--checkpoint` sichert der Explorer seinen Stand regelmäßig und bei jedem Halt; derselbe Aufruf setzt dort fort.
+
+| Störung | Verhalten |
+|---|---|
+| `step()` wirft (Timeout, 5xx) | Wiederholung mit wachsender Pause, danach als `FEHLER` gemeldet; die Suche läuft weiter, der nächste Lauf holt den Schritt nach |
+| System antwortet gar nicht | Halt nach 20 Fehlern in Folge |
+| Strg+C, SIGTERM | laufende Schritte enden, Stand gesichert, Exit 3 |
+| Speicher fast voll | Halt mit Sicherung statt Absturz; mit mehr Speicher fortsetzen |
+| harter Abbruch (SIGKILL, Stromausfall) | die letzte Zwischensicherung gilt |
+| Sicherung beschädigt | Prüfsumme schlägt an, die vorige Sicherung (`.bak`) springt ein |
+
+Eine Fortsetzung liefert dieselben Zahlen wie ein Lauf am Stück: kein Schritt doppelt, keiner verloren. Gemessen an 4,9 Mio. Zuständen: Sicherung alle 3 s verlängert den Lauf von 14 s auf 18 s, die Sicherung ist 38 MB groß, Laden dauert 2,7 s.
 
 ## Größe
 
@@ -65,7 +84,7 @@ node tools/check-skills.mjs
 node tools/bench.mjs
 ```
 
-Tests für Explorer, Beispiele und Hilfsskripte; `check-skills.mjs` meldet, wenn Skills, README und Manifeste nicht zusammenpassen. Alle drei laufen in der CI.
+Tests für Explorer, Beispiele, Wiederaufnahme und Hilfsskripte; `check-skills.mjs` meldet, wenn Skills, README und Manifeste nicht zusammenpassen. Alle drei laufen in der CI.
 
 ## Grok-Varianten
 

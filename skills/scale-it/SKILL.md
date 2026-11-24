@@ -77,6 +77,25 @@ Reihenfolge fest: **Fundament → Engpass → Masse → Effizienz.**
 
 Nach jeder Welle: Tests grün, Messung wiederholt, Zwischenstand in einem Satz. Rote Tests oder ein schlechterer Messwert stoppen die nächste Welle. Tests werden nie abgeschaltet, um weiterzukommen. Findet ein neuer Test einen alten Fehler, wird er behoben und im Bericht genannt.
 
+### Sicherungspunkte und Wiederaufnahme
+
+Ein langer Lauf wird unterbrochen: Kontext voll, Sitzung weg, Werkzeug tot. Dann darf keine grüne Welle verloren sein.
+
+- **Laufzettel** führen, außerhalb des Codes (Scratch-Verzeichnis; hat das Projekt einen eigenen Ort für Sitzungsstände, dann dort): Faktor n, Pfad zu `vorher.json`, die Wellen mit Erfolgssignal, je Welle der Stand `offen | läuft | grün | rot | blockiert`, letzter Messwert, Sicherungspunkt. Nach jeder Statusänderung sofort schreiben, nicht am Ende.
+- **Sicherungspunkt nach jeder grünen Welle:** ein Commit, wenn die Projektregeln Commits erlauben; sonst `git diff > <scratch>/welle-<k>.patch`. Nie mehrere Wellen ungesichert übereinander.
+- **Wiederaufnahme:** Findet der Skill beim Start einen Laufzettel, setzt er fort statt neu zu planen. Dem Zettel wird dabei nicht geglaubt: Tests und Messung der letzten als grün notierten Welle laufen noch einmal. Stimmen sie, geht es mit der ersten nicht grünen Welle weiter. Stimmen sie nicht, gilt die Welle als rot.
+- **Rote Welle:** höchstens zwei gezielte Reparaturversuche, jeder mit einer benannten Ursache. Danach den Versuch als Patch ablegen (`git diff > <scratch>/welle-<k>-versuch.patch`), die Arbeitskopie auf den letzten Sicherungspunkt zurücksetzen und die Welle kleiner schneiden. Zurückgesetzt werden nur eigene Änderungen dieser Welle – nie fremde, nie ungefragt mehr.
+
+### Führung: kein Agent bleibt liegen
+
+Wer Teile an Subagenten gibt, bleibt für ihr Ergebnis verantwortlich.
+
+- **Auftrag, der überlebt:** Ziel in einem Satz, eigener Dateibereich (nie zwei Agenten an derselben Datei), Erfolgssignal als Befehl, Budget, und der Satz: „Kommst du nicht weiter, liefere den Teilstand und woran es hängt – nicht nichts.“
+- **Ergebnis prüfen, nicht glauben:** das Erfolgssignal selbst ausführen. „Fertig“ ohne grünes Signal ist „rot“.
+- **Agent scheitert, hängt oder liefert leer:** (1) ansehen, was er hinterlassen hat – brauchbare Teilarbeit bleibt; (2) *einmal* neu beauftragen, enger geschnitten und mit der Fehlermeldung im Auftrag; (3) scheitert auch das, selbst übernehmen oder die Aufgabe als blockiert in den Bericht schreiben. Nie denselben Auftrag unverändert wiederholen, nie Arbeit ungesehen verwerfen.
+- **Einer blockiert, die anderen laufen weiter.** Der Bericht entsteht auch dann, mit dem, was fertig ist.
+- **Langläufer brauchen eigene Sicherung:** Jeder Schritt, der länger als ein paar Minuten läuft (Benchmark, Suche, Generierung), muss seinen Stand selbst sichern und fortsetzen können. Fehlt das, ist es Teil der Welle „Fundament“.
+
 ## 4. Abschlussbericht
 
 ```bash
