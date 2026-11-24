@@ -1,6 +1,6 @@
 {
   "name": "agent-workflow-skills",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Three skills that make agentic work faster and safer: explore slow systems through a fast headless oracle with BFS search and trap detection, and check goal, scope and success signal before, during and after a task, and scale a project by a factor n in measured, verified waves.",
   "author": { "name": "Paul" },
   "homepage": "https://github.com/paul1064/agent-workflow-skills",

@@ -19,12 +19,12 @@ Gemessen an einem realen Web-Rätsel (verschlüsselter Tresor, ~200 Einträge, Z
 1. **Wahrheit lesen, nicht Oberfläche.** Quelltext, Netzwerk-Antworten, Config, Logs. Kommentare und „toter“ Code sind oft die eigentlichen Regeln. Hinweise im UI sind verlustbehaftet – sie können absichtlich auf einen Köder zeigen.
 2. **Orakel extrahieren.** Die kleinste Funktion nachbauen, die *Eingabe → Wirkung* beantwortet (Validierung, Entschlüsselung, Zustandsübergang, Endpunkt). Nur lesend; das Original bleibt unangetastet.
 3. **Orakel kalibrieren.** 2–3 bekannte Eingaben durchs Orakel *und* durchs Echtsystem schicken. Abweichung = Orakel falsch, nicht weitersuchen.
-4. **Adapter schreiben** (`initial`, `actions`, `step`, optional `key`) – Vorlage: `${CLAUDE_SKILL_DIR}/examples/toy-adapter.mjs`.
+4. **Adapter schreiben** (`initial`, `actions`, `step`, optional `key`) – Vorlage: `${CLAUDE_SKILL_DIR}/examples/toy-adapter.mjs`; weitere Muster im selben Ordner (Zahlenschloss, Labyrinth, API-Blättern, Konfig-Schalter).
 5. **Suchen:**
    ```bash
    node "${CLAUDE_SKILL_DIR}/scripts/explore.mjs" mein-adapter.mjs --depth 12 --nodes 5000
    ```
-   Ausgabe: kürzester Pfad zum Ziel, Fallen (je einmal, mit Häufigkeit), nie wirksame Kandidaten, Statistik. Exit 0 = Ziel gefunden.
+   Ausgabe: kürzester Pfad zum Ziel, Fallen (je einmal, mit Häufigkeit), nie wirksame Kandidaten, Statistik. Exit 0 = Ziel gefunden, 1 = kein Ziel, 3 = unvollständig (siehe „Wenn der Lauf abbricht“).
 6. **Gegenprobe im Echtsystem.** Den gefundenen Pfad genau einmal real ausführen und das *echte* Erfolgssignal prüfen (siehe Skill `goal-signal-check`).
 
 ## Adapter-Regeln
@@ -34,6 +34,21 @@ Gemessen an einem realen Web-Rätsel (verschlüsselter Tresor, ~200 Einträge, Z
 - `goal` nur bei einem harten Signal setzen (Flag gesetzt, Status 200 mit Inhalt X, Level-Wert) – nie bei „Text klingt nach Fortschritt“.
 - Frühe Entscheidungen (Captcha, Rolle, Modus) gehören in den **Zustand**. Sie können 20 Schritte später als Voraussetzung auftauchen.
 - `key(state)` muss alles enthalten, was das Verhalten beeinflusst, sonst verschluckt die Deduplizierung echte Wege.
+
+## Wenn der Lauf abbricht
+
+Ein Orakel, das ein echtes System fragt (Netz, Browser, Build), fällt irgendwann aus. Der Explorer verliert dabei keine Arbeit:
+
+```bash
+node "${CLAUDE_SKILL_DIR}/scripts/explore.mjs" mein-adapter.mjs --checkpoint lauf.ck
+```
+
+- **`step()` wirft:** zwei Wiederholungen mit wachsender Pause (`--retries`, `--backoff`). Danach gilt der Schritt als fehlgeschlagen, steht als `FEHLER` im Bericht, und die Suche läuft weiter. Wirf also bei Timeout oder 5xx einen Fehler – gib nicht `null` zurück, sonst hält der Explorer den Weg für wirkungslos.
+- **System ganz weg:** nach 20 Fehlern in Folge (`--max-fail`) hält die Suche an, statt den ganzen Zustandsraum als „fehlgeschlagen“ zu verbrennen.
+- **Strg+C, SIGTERM, Speicher fast voll:** laufende Schritte enden, der Stand wird gesichert, Exit 3.
+- **Fortsetzen:** derselbe Aufruf mit demselben `--checkpoint`. Fehlgeschlagene Schritte kommen zuerst noch einmal dran; kein Schritt läuft doppelt. Auch „Tiefe erreicht“ lässt sich so mit größerem `--depth` fortsetzen.
+- **Beschädigte Sicherung:** jede Sicherung trägt eine Prüfsumme; stimmt sie nicht, springt die vorige (`lauf.ck.bak`) ein. Gehört die Sicherung zu einem geänderten Adapter, bricht der Lauf mit Exit 2 ab – Datei löschen und neu suchen.
+- Exit 3 heißt **„weiß ich noch nicht“**, nicht „gibt es nicht“. Nur Exit 1 nach vollständiger Suche belegt, dass kein Weg existiert. Nach nachgeholten Fehlern ist ein gefundener Pfad gültig, aber womöglich nicht der kürzeste.
 
 ## Kandidaten finden
 

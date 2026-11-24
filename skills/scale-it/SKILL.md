@@ -1,7 +1,7 @@
 ---
 name: scale-it
-description: Skaliert das aktuelle Projekt um den Faktor n – n-mal mehr Umfang, n-mal mehr Tragfähigkeit, messbar effizienter. Aufruf `/scale-it -n`, z. B. `/scale-it -10` für Faktor 10. Misst zuerst die Ausgangslage, legt pro Achse ein Ziel fest, baut in geprüften Wellen und meldet den tatsächlich erreichten Faktor. Nutzen, wenn ein Projekt deutlich größer, leistungsfähiger oder umfangreicher werden soll. Triggers: scale-it, scale it, skalieren, hochskalieren, 10x, größer machen, ausbauen, scale up, make it bigger.
-argument-hint: "-n   (z. B. -10 = Faktor 10; ohne Angabe: 2)"
+description: Skaliert das aktuelle Projekt um den Faktor n – mehr Umfang, mehr Tragfähigkeit, messbar effizienter. Aufruf `/scale-it -n`, z. B. `/scale-it -10` für Faktor 10. Misst zuerst die Ausgangslage an einer Größenreihe, findet den Engpass, der bei n bricht, baut in geprüften Wellen und meldet den tatsächlich erreichten Faktor mit Beleg. Nutzen, wenn ein Projekt deutlich größer, leistungsfähiger oder umfangreicher werden soll. Triggers: scale-it, scale it, skalieren, hochskalieren, 10x, größer machen, ausbauen, scale up, make it bigger.
+argument-hint: "-n [fokus] [go]   (z. B. -10 = Faktor 10; ohne Zahl: 2; go = ohne Zwischenstopp bauen)"
 ---
 
 # Scale-It
@@ -12,63 +12,106 @@ Macht aus einem Projekt ein n-mal größeres – ohne dass es n-mal schwerer zu 
 
 ## 0. Argument lesen
 
-- `-10`, `10`, `x10`, `10x` → `n = 10`. Kein Argument → `n = 2`.
-- `n < 2` oder keine Zahl → einmal nachfragen, nichts tun.
-- Optionaler Fokus nach der Zahl: `/scale-it -10 inhalt` beschränkt auf eine Achse (siehe 2).
-- `n > 5` läuft in Stufen von höchstens ×3 (z. B. 10 = ×3 → ×3,3). Nach jeder Stufe wird neu gemessen.
+- `-10`, `10`, `x10`, `10x` → `n = 10`. Keine Zahl → `n = 2`. `n < 2` → einmal nachfragen, nichts tun.
+- **Fokus** (optional): ein Wort nach der Zahl beschränkt auf eine Achse, z. B. `/scale-it -10 tragfähigkeit`.
+- **`go`** (optional): nach dem Plan ohne Zwischenstopp bauen. Gilt nur für Umkehrbares auf einem eigenen Branch und nie gegen Projektregeln, die eine Freigabe verlangen.
+- `n > 5` läuft in Stufen von höchstens ×3. Nach jeder Stufe wird neu gemessen; der Engpass der nächsten Stufe ist oft ein anderer.
 
 ## 1. Ausgangslage messen (nur lesen)
 
-Ohne Zahl kein Faktor. Erfasse, was es gibt – per Befehl, nicht per Schätzung:
+Ohne Zahl kein Faktor. Vier Schritte, in dieser Reihenfolge:
 
-| Achse | Messgröße (Beispiele) |
-|---|---|
-| **Umfang** | Features, Endpunkte, Screens, Level, Inhalte, Befehle, unterstützte Formate |
-| **Tragfähigkeit** | Datensätze, gleichzeitige Nutzer/Objekte, Dateigröße, Durchsatz bis zum Bruch |
-| **Effizienz** | Laufzeit, Speicher, Build-/Testdauer, Kosten pro Vorgang |
-| **Absicherung** | Tests, Abdeckung, CI, Typprüfung, Fehlerbehandlung |
-| **Struktur** | Module, Kopplung, größte Datei, doppelter Code, hart kodierte Werte |
+1. **Projektregeln lesen** (`CLAUDE.md`, README, Contributing). Sie gelten vor diesem Skill: verlangt das Projekt Freigaben, Stories oder Design-Dokumente, läuft Scale-It durch diesen Prozess.
+2. **Umgebung prüfen.** Welche Mess- und Testbefehle laufen *hier* wirklich (Compiler, Engine, Laufzeit, externe Dienste)? Jeden einmal ausführen. Was hier nicht läuft, ist „hier nicht messbar“ – diese Teile landen später in einer eigenen Liste „auf dem Zielrechner“, nicht stillschweigend im Plan.
+3. **Bestand zählen** und speichern, außerhalb des Projekts:
+   ```bash
+   node "${CLAUDE_SKILL_DIR}/scripts/measure.mjs" . --json > <scratch>/vorher.json
+   ```
+   Das liefert Dateien, Code- und Testzeilen, größte Datei, CI. Fachliche Größen kommen aus dem Projekt dazu:
 
-Dazu: Projektregeln lesen (`CLAUDE.md`, README, Contributing). Sie gelten vor diesem Skill – verlangt das Projekt Freigaben, Stories oder Design-Dokumente, läuft Scale-It durch diesen Prozess, nicht daran vorbei.
+   | Achse | Messgröße (Beispiele) |
+   |---|---|
+   | **Umfang** | Features, Endpunkte, Screens, Level, Inhalte, Befehle, Formate |
+   | **Tragfähigkeit** | Datensätze, gleichzeitige Nutzer/Objekte, Dateigröße, Durchsatz bis zum Bruch |
+   | **Effizienz** | Laufzeit, Speicher, Build-/Testdauer, Kosten pro Vorgang |
+   | **Absicherung** | Tests, CI, Typprüfung, Fehlerbehandlung |
+   | **Struktur** | Kopplung, größte Datei, doppelte Daten, hart kodierte Werte |
 
-Ergebnis: eine Tabelle „Achse · Messgröße · Ist-Wert · wie gemessen“. Was sich nicht messen lässt, steht als „nicht messbar“ drin, nicht als geratene Zahl.
+4. **Größenreihe fahren.** Das, was das Projekt verarbeitet, in drei Größen laufen lassen: Ist, ×10, ×100. Wächst die Zeit oder der Speicher deutlich stärker als die Größe, liegt dort der Engpass – gemessen, nicht vermutet. Läuft ×100 sauber durch, die Reihe fortsetzen, bis etwas bricht oder das Zeitbudget endet: die Bruchstelle samt Fehlermeldung *ist* die Tragfähigkeit (harte Grenzen wie Speicher- oder Containerlimits zeigen sich erst dort). Gibt es nichts Lauffähiges, entfällt die Reihe und die Achse heißt „nicht messbar“.
+
+**Gekoppelte Größen:** Hängt eine Größe an einer anderen (10 Karten je Slot → 1000 Kombinationen), ist die *Leitgröße* die, an der jemand von Hand arbeitet. Der Faktor gilt für sie; abgeleitete Größen stehen daneben, zählen aber nicht als Zielerfüllung.
+
+Ergebnis: Tabelle „Achse · Messgröße · Ist-Wert · wie gemessen“. Nie eine geratene Zahl.
 
 ## 2. Skalierungsplan
 
-Pro Achse ein Ziel aus Ist-Wert × n – und zuerst der Engpass, der bei n bricht:
+Jede Achse bekommt genau eine Einstufung:
 
-1. **Engpass finden.** Was hält bei n-facher Größe nicht? (Eine Datei mit allem, O(n²)-Schleife, Handarbeit pro Inhalt, kein Test, alles im Speicher.) Der Engpass kommt vor jedem neuen Feature.
+| Einstufung | Bedeutung | Folge |
+|---|---|---|
+| **trägt** | ×n bringt Nutzen und lässt sich belegen | Ziel = Ist × n |
+| **Aufblähen** | ×n ginge nur durch Erfinden oder Kopieren | kein Ziel; steht mit Begründung in der Streichliste |
+| **blockiert** | ×n sinnvoll, aber hier nicht bau- oder messbar | Ziel bleibt, Welle wandert auf die Liste „auf dem Zielrechner“ |
+
+Die Streichliste geht dem Faktor vor: lieber ×10 auf zwei Achsen mit Beleg als ×10 auf fünf durch Füllmaterial.
+
+Dann der Plan:
+
+1. **Engpass zuerst.** Was hält bei n-facher Größe nicht? Er kommt vor jedem neuen Feature.
 2. **Hebel vor Masse.** n-mal mehr Inhalt entsteht durch Daten, Generatoren und Konfiguration – nicht durch n-mal kopierten Code. Ein Mechanismus, n Ausprägungen.
-3. **Effizienz hat eine Richtung.** Laufzeit und Speicher pro Einheit sinken oder bleiben gleich; Gesamtkosten wachsen langsamer als n.
-4. **Absicherung wächst mit.** Jede Welle bringt ihre Tests mit. Ein n-faches Projekt ohne n-fache Prüfung ist nur n-mal kaputtbarer.
-5. **Streichliste.** Was wird bewusst *nicht* skaliert, und warum.
+3. **Eine Quelle.** Was heute doppelt gepflegt wird, läuft bei n auseinander: zusammenführen oder per Prüfskript koppeln.
+4. **Absicherung wächst mit.** Jede Welle bringt ihre Tests mit.
 
-Plan als Wellen ausgeben: je Welle Ziel, betroffene Dateien, Erfolgssignal (Befehl + erwarteter Wert), grober Aufwand. Dazu ehrlich: welcher Faktor ist in dieser Sitzung realistisch, welcher braucht mehrere.
+Plan als Wellen ausgeben: je Welle Ziel, betroffene Dateien, Erfolgssignal (Befehl + erwarteter Wert), „hier machbar: ja/nein“. Dazu ehrlich: welcher Faktor ist in dieser Sitzung realistisch.
 
-**Stopp. Plan zeigen, Freigabe abwarten.** Vorher wird nichts geändert.
+**Stopp: Plan zeigen und Freigabe abwarten** – außer der Aufruf enthielt `go`.
 
 ## 3. In Wellen bauen
 
 Reihenfolge fest: **Fundament → Engpass → Masse → Effizienz.**
 
-- **Fundament:** Messskripte/Benchmarks und Tests, die den Ist-Zustand festhalten. Ohne sie ist „schneller“ und „größer“ nicht beweisbar.
-- **Engpass:** die Struktur, die n trägt (Aufteilung, Datenformat, Schnittstelle).
-- **Masse:** Umfang und Inhalt auf dem neuen Fundament ausrollen. Unabhängige Teile parallel an Subagenten geben, jeder mit eigenem Dateibereich und eigenem Erfolgssignal.
-- **Effizienz:** messen, den größten Brocken optimieren, wieder messen. Nichts optimieren, was die Messung nicht als Brocken zeigt.
+- **Fundament:** Tests, die den Ist-Zustand festhalten, und ein Benchmark-Befehl für die Größenreihe. Ohne sie ist „schneller“ und „größer“ nicht beweisbar.
+- **Engpass:** die Struktur, die n trägt. Vorher/nachher mit demselben Befehl und derselben Eingabe messen.
+- **Masse:** Umfang auf dem neuen Fundament ausrollen. Unabhängige Teile parallel an Subagenten geben, jeder mit eigenem Dateibereich und eigenem Erfolgssignal.
+- **Effizienz:** Profil ziehen, den größten Brocken optimieren, wieder messen. Nichts optimieren, was das Profil nicht als Brocken zeigt; ist der Brocken dem Verfahren eigen, steht er als „nächster Engpass“ im Bericht statt im Code.
 
-Nach jeder Welle: Tests grün, Messung wiederholt, Zwischenstand in einem Satz. Rote Tests oder ein verschlechterter Messwert stoppen die nächste Welle. Tests werden nie abgeschaltet, um weiterzukommen.
+Nach jeder Welle: Tests grün, Messung wiederholt, Zwischenstand in einem Satz. Rote Tests oder ein schlechterer Messwert stoppen die nächste Welle. Tests werden nie abgeschaltet, um weiterzukommen. Findet ein neuer Test einen alten Fehler, wird er behoben und im Bericht genannt.
+
+### Sicherungspunkte und Wiederaufnahme
+
+Ein langer Lauf wird unterbrochen: Kontext voll, Sitzung weg, Werkzeug tot. Dann darf keine grüne Welle verloren sein.
+
+- **Laufzettel** führen, außerhalb des Codes (Scratch-Verzeichnis; hat das Projekt einen eigenen Ort für Sitzungsstände, dann dort): Faktor n, Pfad zu `vorher.json`, die Wellen mit Erfolgssignal, je Welle der Stand `offen | läuft | grün | rot | blockiert`, letzter Messwert, Sicherungspunkt. Nach jeder Statusänderung sofort schreiben, nicht am Ende.
+- **Sicherungspunkt nach jeder grünen Welle:** ein Commit, wenn die Projektregeln Commits erlauben; sonst `git diff > <scratch>/welle-<k>.patch`. Nie mehrere Wellen ungesichert übereinander.
+- **Wiederaufnahme:** Findet der Skill beim Start einen Laufzettel, setzt er fort statt neu zu planen. Dem Zettel wird dabei nicht geglaubt: Tests und Messung der letzten als grün notierten Welle laufen noch einmal. Stimmen sie, geht es mit der ersten nicht grünen Welle weiter. Stimmen sie nicht, gilt die Welle als rot.
+- **Rote Welle:** höchstens zwei gezielte Reparaturversuche, jeder mit einer benannten Ursache. Danach den Versuch als Patch ablegen (`git diff > <scratch>/welle-<k>-versuch.patch`), die Arbeitskopie auf den letzten Sicherungspunkt zurücksetzen und die Welle kleiner schneiden. Zurückgesetzt werden nur eigene Änderungen dieser Welle – nie fremde, nie ungefragt mehr.
+
+### Führung: kein Agent bleibt liegen
+
+Wer Teile an Subagenten gibt, bleibt für ihr Ergebnis verantwortlich.
+
+- **Auftrag, der überlebt:** Ziel in einem Satz, eigener Dateibereich (nie zwei Agenten an derselben Datei), Erfolgssignal als Befehl, Budget, und der Satz: „Kommst du nicht weiter, liefere den Teilstand und woran es hängt – nicht nichts.“
+- **Ergebnis prüfen, nicht glauben:** das Erfolgssignal selbst ausführen. „Fertig“ ohne grünes Signal ist „rot“.
+- **Agent scheitert, hängt oder liefert leer:** (1) ansehen, was er hinterlassen hat – brauchbare Teilarbeit bleibt; (2) *einmal* neu beauftragen, enger geschnitten und mit der Fehlermeldung im Auftrag; (3) scheitert auch das, selbst übernehmen oder die Aufgabe als blockiert in den Bericht schreiben. Nie denselben Auftrag unverändert wiederholen, nie Arbeit ungesehen verwerfen.
+- **Einer blockiert, die anderen laufen weiter.** Der Bericht entsteht auch dann, mit dem, was fertig ist.
+- **Langläufer brauchen eigene Sicherung:** Jeder Schritt, der länger als ein paar Minuten läuft (Benchmark, Suche, Generierung), muss seinen Stand selbst sichern und fortsetzen können. Fehlt das, ist es Teil der Welle „Fundament“.
 
 ## 4. Abschlussbericht
 
-Tabelle „Achse · vorher · nachher · erreichter Faktor · Ziel n · Beleg“.
+```bash
+node "${CLAUDE_SKILL_DIR}/scripts/measure.mjs" . --compare <scratch>/vorher.json
+```
 
-- Der erreichte Faktor ist gemessen. `×4 von ×10` ist ein gültiges Ergebnis; „ungefähr ×10“ ohne Beleg ist keines.
-- Offen: was fehlt bis n, nächster Engpass, empfohlener Folgeaufruf.
-- Neue Risiken: was durch die Größe dazugekommen ist (Abhängigkeiten, Laufzeiten, Wartung).
+Tabelle „Achse · vorher · nachher · erreichter Faktor · Ziel n · Beleg“, darunter:
+
+- **Erreicht:** nur Gemessenes. `×4 von ×10` ist ein gültiges Ergebnis; „ungefähr ×10“ ohne Beleg ist keines.
+- **Gestrichen:** jede Achse der Einstufung „Aufblähen“, mit Grund.
+- **Auf dem Zielrechner:** was blockiert war, als fertige Befehlsliste.
+- **Nächster Engpass** und der empfohlene Folgeaufruf.
 
 ## Grenzen
 
-- Nichts Unumkehrbares ohne ausdrückliche Freigabe: Datenmigrationen, gelöschte Dateien, öffentliche Schnittstellen, Deployments, Kostenpflichtiges (Cloud, APIs).
+- Nichts Unumkehrbares ohne ausdrückliche Freigabe, auch nicht mit `go`: Datenmigrationen, gelöschte Dateien, geänderte öffentliche Schnittstellen, Deployments, Kostenpflichtiges.
 - Commits und Pushes nur nach den Regeln des Projekts.
-- Kein Aufblähen: Zeilen, Dateien und Abhängigkeiten sind keine Erfolgsgröße. Wächst nur der Code und keine Messgröße aus Schritt 1, ist die Welle gescheitert.
-- Passt gut zu `goal-signal-check` (Erfolgssignal vor dem Start, Gegenprobe vor „fertig“).
+- Zeilen, Dateien und Abhängigkeiten sind keine Erfolgsgröße. Wächst nur der Code und keine fachliche Messgröße, ist die Welle gescheitert.
+- Passt zu `goal-signal-check` (Erfolgssignal vor dem Start, Gegenprobe vor „fertig“).
