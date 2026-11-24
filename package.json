@@ -1,0 +1,10 @@
+{
+  "name": "agent-workflow-skills",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Claude Code skills: oracle-first exploration and goal/signal checks. Zero dependencies.",
+  "engines": { "node": ">=18" },
+  "scripts": { "test": "node --test" },
+  "license": "MIT"
+}
