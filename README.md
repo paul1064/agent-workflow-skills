@@ -40,9 +40,12 @@ An einem Web-Rätsel mit verschlüsseltem Tresor (~200 Einträge, PBKDF2) und Zu
 - 9-Schritt-Pfad zum versteckten Endlevel: 1,4 s mit dem generischen Explorer.
 - Erkannt: ein Köder (Hinweis führt zu lesbarem Klartext ohne Wirkung) und eine Schleife mit 10¹⁵ Runden ohne Belohnung.
 
-## Grok-Variante
+## Grok-Varianten
 
-[`grok/oracle-wealth-exploration.md`](grok/oracle-wealth-exploration.md): `oracle-first-exploration` angepasst als Grok-Skill für Vermögensaufbau, rein theoretisch. Name, Beschreibung und Anweisungen zum Einfügen in Grok.
+Beide Skills gibt es auch als Grok-Skill. Name, Beschreibung und Anweisungen zum Einfügen in Grok:
+
+- [`grok/oracle-wealth-exploration.md`](grok/oracle-wealth-exploration.md): `oracle-first-exploration`, angepasst für Vermögensaufbau, rein theoretisch.
+- [`grok/goal-signal-check.md`](grok/goal-signal-check.md): `goal-signal-check`, angepasst für Grok (Befugnis bei Connect Apps und Automations, Quellen von X).
 
 ## Hinweis
 
