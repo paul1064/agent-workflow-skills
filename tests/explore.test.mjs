@@ -88,3 +88,11 @@ test("langer Pfad kommt vollständig und in der richtigen Reihenfolge heraus", (
   assert.equal(r.status, 0);
   assert.deepEqual(goals(r.stdout)[0].split(" > "), Array.from({ length: 300 }, (_, i) => "s" + i));
 });
+
+test("verteiltes Zustands-Set liefert dasselbe Ergebnis wie ein einzelnes", () => {
+  const one = run(EXAMPLES + "zahlenschloss.mjs", "--all");
+  const many = spawnSync(process.execPath, [EXPLORE, EXAMPLES + "zahlenschloss.mjs", "--all"], { encoding: "utf8", env: { ...process.env, EXPLORE_SHARD: "7" } });
+  const strip = (o) => o.replace(/zeit=\d+ms/, "");
+  assert.equal(many.status, 0);
+  assert.equal(strip(many.stdout), strip(one.stdout));
+});

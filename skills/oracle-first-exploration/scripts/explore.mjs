@@ -35,7 +35,12 @@ async function pool(tasks, n) {
 const t0 = Date.now();
 // Pfade als Vorgänger-Kette (Knoten = { up, a }) statt als Kopie pro Zustand: Speicher bleibt O(Zustände).
 const pathOf = (n) => { const p = []; for (; n; n = n.up) p.push(n.a); return p.reverse(); };
-const seen = new Set([key(A.initial)]);
+// Ein einzelnes Set fasst in V8 höchstens 2^24 Einträge. Darüber auf mehrere Sets verteilen.
+const SHARD = +process.env.EXPLORE_SHARD || 1 << 23;
+const seen = { sets: [new Set()], size: 0,
+  has(k) { for (const s of this.sets) if (s.has(k)) return true; return false; },
+  add(k) { let s = this.sets[this.sets.length - 1]; if (s.size >= SHARD) this.sets.push(s = new Set()); s.add(k); this.size++; } };
+seen.add(key(A.initial));
 const goals = [], traps = new Map(), used = new Set(), tried = new Set();
 let frontier = [{ state: A.initial, node: null }], calls = 0, stop = false;
 

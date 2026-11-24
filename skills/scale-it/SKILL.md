@@ -37,7 +37,7 @@ Ohne Zahl kein Faktor. Vier Schritte, in dieser Reihenfolge:
    | **Absicherung** | Tests, CI, Typprüfung, Fehlerbehandlung |
    | **Struktur** | Kopplung, größte Datei, doppelte Daten, hart kodierte Werte |
 
-4. **Größenreihe fahren.** Das, was das Projekt verarbeitet, in drei Größen laufen lassen: Ist, ×10, ×100. Wächst die Zeit oder der Speicher deutlich stärker als die Größe, liegt dort der Engpass – gemessen, nicht vermutet. Gibt es nichts Lauffähiges, entfällt die Reihe und die Achse heißt „nicht messbar“.
+4. **Größenreihe fahren.** Das, was das Projekt verarbeitet, in drei Größen laufen lassen: Ist, ×10, ×100. Wächst die Zeit oder der Speicher deutlich stärker als die Größe, liegt dort der Engpass – gemessen, nicht vermutet. Läuft ×100 sauber durch, die Reihe fortsetzen, bis etwas bricht oder das Zeitbudget endet: die Bruchstelle samt Fehlermeldung *ist* die Tragfähigkeit (harte Grenzen wie Speicher- oder Containerlimits zeigen sich erst dort). Gibt es nichts Lauffähiges, entfällt die Reihe und die Achse heißt „nicht messbar“.
 
 **Gekoppelte Größen:** Hängt eine Größe an einer anderen (10 Karten je Slot → 1000 Kombinationen), ist die *Leitgröße* die, an der jemand von Hand arbeitet. Der Faktor gilt für sie; abgeleitete Größen stehen daneben, zählen aber nicht als Zielerfüllung.
 
@@ -73,7 +73,7 @@ Reihenfolge fest: **Fundament → Engpass → Masse → Effizienz.**
 - **Fundament:** Tests, die den Ist-Zustand festhalten, und ein Benchmark-Befehl für die Größenreihe. Ohne sie ist „schneller“ und „größer“ nicht beweisbar.
 - **Engpass:** die Struktur, die n trägt. Vorher/nachher mit demselben Befehl und derselben Eingabe messen.
 - **Masse:** Umfang auf dem neuen Fundament ausrollen. Unabhängige Teile parallel an Subagenten geben, jeder mit eigenem Dateibereich und eigenem Erfolgssignal.
-- **Effizienz:** messen, den größten Brocken optimieren, wieder messen. Nichts optimieren, was die Messung nicht als Brocken zeigt.
+- **Effizienz:** Profil ziehen, den größten Brocken optimieren, wieder messen. Nichts optimieren, was das Profil nicht als Brocken zeigt; ist der Brocken dem Verfahren eigen, steht er als „nächster Engpass“ im Bericht statt im Code.
 
 Nach jeder Welle: Tests grün, Messung wiederholt, Zwischenstand in einem Satz. Rote Tests oder ein schlechterer Messwert stoppen die nächste Welle. Tests werden nie abgeschaltet, um weiterzukommen. Findet ein neuer Test einen alten Fehler, wird er behoben und im Bericht genannt.
 

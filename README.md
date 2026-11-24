@@ -45,7 +45,7 @@ An einem Web-Rätsel mit verschlüsseltem Tresor (~200 Einträge, PBKDF2) und Zu
 
 ## Größe
 
-Der Explorer hält pro Zustand nur einen Verweis auf den Vorgänger. Gemessen mit `node tools/bench.mjs 70 220 700 2214` (leeres Gitter, Node 22):
+Der Explorer hält pro Zustand nur einen Verweis auf den Vorgänger und verteilt die besuchten Zustände auf mehrere Sets, sobald eines voll ist. Gemessen mit `node tools/bench.mjs 70 220 700 2214 7000` (leeres Gitter, Node 22, 8 GB Heap):
 
 | Zustände | Zeit |
 |---|---|
@@ -53,6 +53,9 @@ Der Explorer hält pro Zustand nur einen Verweis auf den Vorgänger. Gemessen mi
 | 48.399 | 0,1 s |
 | 489.999 | 1,0 s |
 | 4.901.795 | 14 s |
+| 48.999.999 | 7 min |
+
+Ab etwa 5 Mio. Zuständen sinkt der Durchsatz (von rund 470.000 auf 116.000 Zustände pro Sekunde): Die Zeit geht in die Suche im Zustands-Set und in die Speicherbereinigung.
 
 ## Entwickeln
 
