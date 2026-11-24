@@ -1,0 +1,10 @@
+{
+  "name": "agent-workflow-skills",
+  "version": "0.1.0",
+  "description": "Two skills that make agentic work faster and safer: explore slow systems through a fast headless oracle with BFS search and trap detection, and check goal, scope and success signal before, during and after a task.",
+  "author": { "name": "Paul" },
+  "homepage": "https://github.com/paul1064/agent-workflow-skills",
+  "repository": "https://github.com/paul1064/agent-workflow-skills",
+  "license": "MIT",
+  "keywords": ["agentic-workflow", "exploration", "bfs", "puzzle", "verification", "scope", "checklist"]
+}

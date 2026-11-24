@@ -1,0 +1,16 @@
+{
+  "name": "agent-workflow-skills",
+  "owner": {
+    "name": "Paul"
+  },
+  "metadata": {
+    "description": "Claude Code skills for faster, safer agentic work: oracle-first exploration and goal/signal checks."
+  },
+  "plugins": [
+    {
+      "name": "agent-workflow-skills",
+      "source": "./",
+      "description": "Oracle-first exploration and goal/signal checks for agentic workflows."
+    }
+  ]
+}
