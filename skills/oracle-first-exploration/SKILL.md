@@ -19,12 +19,18 @@ Gemessen an einem realen Web-Rätsel (verschlüsselter Tresor, ~200 Einträge, Z
 1. **Wahrheit lesen, nicht Oberfläche.** Quelltext, Netzwerk-Antworten, Config, Logs. Kommentare und „toter“ Code sind oft die eigentlichen Regeln. Hinweise im UI sind verlustbehaftet – sie können absichtlich auf einen Köder zeigen.
 2. **Orakel extrahieren.** Die kleinste Funktion nachbauen, die *Eingabe → Wirkung* beantwortet (Validierung, Entschlüsselung, Zustandsübergang, Endpunkt). Nur lesend; das Original bleibt unangetastet.
 3. **Orakel kalibrieren.** 2–3 bekannte Eingaben durchs Orakel *und* durchs Echtsystem schicken. Abweichung = Orakel falsch, nicht weitersuchen.
-4. **Adapter schreiben** (`initial`, `actions`, `step`, optional `key`) – Vorlage: `${CLAUDE_SKILL_DIR}/examples/toy-adapter.mjs`.
+4. **Adapter schreiben** (`initial`, `actions`, `step`, optional `key`, `heuristic`). Vorlagen in `${CLAUDE_SKILL_DIR}/examples/`:
+   - `toy-adapter.mjs` – Rätsel/Tresor mit Falle und Köder
+   - `api-adapter.mjs` – REST-Ablauf (Login → Warenkorb → Bezahlen), Rate-Limit als Falle
+   - `config-adapter.mjs` – kleinste Schalter-Kombination für einen grünen Build
+   - `game-adapter.mjs` – Labyrinth mit Kosten (Sumpf) und Heuristik, für `--mode astar`
 5. **Suchen:**
    ```bash
    node "${CLAUDE_SKILL_DIR}/scripts/explore.mjs" mein-adapter.mjs --depth 12 --nodes 5000
    ```
    Ausgabe: kürzester Pfad zum Ziel, Fallen (je einmal, mit Häufigkeit), nie wirksame Kandidaten, Statistik. Exit 0 = Ziel gefunden.
+   - **Schritte kosten Unterschiedliches** (Zeit, Geld, API-Kontingent) oder der Graph ist tief: `--mode astar`. `step` liefert `cost`, der Adapter optional `heuristic(state)` (geschätzte Restkosten, nie überschätzen). Ergebnis: günstigster statt kürzester Pfad, meist mit weniger Aufrufen.
+   - Als Bibliothek: `import { explore } from ".../explore.mjs"` liefert `{ goals, traps, dead, states, calls, budgetHit }`.
 6. **Gegenprobe im Echtsystem.** Den gefundenen Pfad genau einmal real ausführen und das *echte* Erfolgssignal prüfen (siehe Skill `goal-signal-check`).
 
 ## Adapter-Regeln

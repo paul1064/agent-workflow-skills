@@ -24,7 +24,11 @@ Drei Stationen, je ein paar Sekunden. Entstanden aus konkreten Fehlern, nicht au
 
 ## 3. Vor „fertig“
 
-- **Gegenprobe im Echtsystem**, nicht nur im Modell/Simulator/Test. Ein Durchlauf, echtes Signal ablesen.
+- **Gegenprobe im Echtsystem**, nicht nur im Modell/Simulator/Test. Ein Durchlauf, echtes Signal ablesen. Mit dem Prüfskript als eine Zeile:
+  ```bash
+  node "${CLAUDE_SKILL_DIR}/scripts/verify.mjs" --cmd "npm test" --stdout "\b0 failed" --not-stdout "TODO" --git-allow "src/**"
+  ```
+  Prüft Exit-Code, Pflicht- und Verbotsmuster in der Ausgabe, Dateien (`--file`) und ob nur erlaubte Pfade geändert wurden (`--git-allow`, `--git-clean`). Exit 0 = grün, 1 = nicht fertig.
 - **Diff prüfen:** Habe ich etwas geändert, das ich nicht ändern sollte? (`git status` muss zur Absprache passen.)
 - **Ergebnis ehrlich melden:** Was ist verifiziert, was nur vermutet, was übersprungen.
 - **Bei öffentlichen Ergebnissen** (Skills, Posts, Repos): keine persönlichen Daten, keine Schlüssel, keine Spoiler/Interna Dritter.
