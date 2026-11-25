@@ -42,6 +42,10 @@ An einem Web-Rätsel mit verschlüsseltem Tresor (~200 Einträge, PBKDF2) und Zu
 - 9-Schritt-Pfad zum versteckten Endlevel: 1,4 s mit dem generischen Explorer.
 - Erkannt: ein Köder (Hinweis führt zu lesbarem Klartext ohne Wirkung) und eine Schleife mit 10¹⁵ Runden ohne Belohnung.
 
+## Managed Agents
+
+Unter [`managed-agents/`](managed-agents/) liegen fünf Agenten-Definitionen für Claude Managed Agents (nicht Teil des Plugins): `midi-schmiede`, `release-manager`, `shop-analyst`, `skill-schmied` und `mutator-apex-bot`, der ein Projekt täglich um einen geprüften Schritt verbessert und als `MagicNNN.zip` ausliefert. Einrichtung, Kostengrenzen und Befehle stehen in [`managed-agents/README.md`](managed-agents/README.md).
+
 ## Grok-Varianten
 
 Beide Skills gibt es auch als Grok-Skill. Name, Beschreibung und Anweisungen zum Einfügen in Grok:

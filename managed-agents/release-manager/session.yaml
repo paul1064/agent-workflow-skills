@@ -1,0 +1,33 @@
+# Ein Lauf des Release-Managers. IDs aus claude-lock.json eintragen, Brief anpassen, dann:
+#   ant beta:sessions create --transform id -r < managed-agents/release-manager/session.yaml
+agent: YOUR_AGENT_ID
+environment_id: YOUR_ENVIRONMENT_ID
+budget: {type: limit, max_list_cost: {currency: USD, amount: "100"}}   # in Cent: "100" = 1,00 $
+initial_events:
+  - type: user.message
+    content:
+      - type: text
+        text: |
+          Brief – bitte durch die echten Angaben ersetzen:
+          Künstler: YOUR_ARTIST_NAME
+          Titel: YOUR_TRACK_TITLE
+          Genre: Acid Tekno, 160 BPM, A-Moll, Länge 6:12
+          Release-Datum: YOUR_RELEASE_DATE
+          Stimmung: treibend, roh, hypnotisch; eine 303-Line, die sich über den ganzen Track aufschraubt
+          Formate im Shop: WAV und MP3 320
+  - type: user.define_outcome
+    description: Das Release-Kit zum Track aus dem Brief als eine Zip-Datei in /mnt/session/outputs/.
+    max_iterations: 2
+    rubric:
+      type: text
+      content: |
+        # Starter-Rubrik – an den eigenen Anspruch anpassen
+        1. In /mnt/session/outputs/ liegt genau eine Zip-Datei, deren Name Künstler und Titel enthält.
+        2. Die Zip enthält metadata.json, texte/beschreibung_de.md, texte/beschreibung_en.md, texte/shop_de.md, texte/shop_en.md, tags.txt, social/teaser.md, social/release.md, social/nachfass.md und checkliste.md.
+        3. metadata.json ist gültiges JSON; jedes Feld, zu dem der Brief nichts sagt, ist null.
+        4. isrc und upc sind null, sofern der Brief sie nicht nennt.
+        5. Die Beschreibungen halten die Grenzen ein: kurz höchstens 200, mittel höchstens 500, lang höchstens 1200 Zeichen.
+        6. Jede kurze Social-Fassung hat höchstens 300 Zeichen.
+        7. Kein Text enthält Pressezitate, Chartplätze, Support-Angaben oder Künstlervergleiche, die nicht im Brief stehen.
+        8. tags.txt enthält 15 bis 25 Tags, einen pro Zeile, ohne Raute.
+        9. checkliste.md führt unter „Offen“ jede Angabe auf, die im Brief fehlt.

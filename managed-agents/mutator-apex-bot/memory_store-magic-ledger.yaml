@@ -1,0 +1,2 @@
+name: magic-ledger
+description: Gedächtnis von MutatorApexBot zwischen den täglichen Läufen. ledger.md hält pro Lauf Nummer, Titel, Änderung und Messwerte fest, map.md ist die Karte des Projekts, backlog.md die Ideenliste. Vor jedem Lauf lesen, am Ende ergänzen.

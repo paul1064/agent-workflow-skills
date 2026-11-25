@@ -1,0 +1,7 @@
+# Cloud-Sandbox ohne Internetzugang, nur Paketquellen (für pip install mido).
+name: midi-schmiede-env
+config:
+  type: cloud
+  networking:
+    type: limited
+    allow_package_managers: true

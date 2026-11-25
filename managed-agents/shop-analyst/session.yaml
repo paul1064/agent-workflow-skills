@@ -1,0 +1,33 @@
+# Ein Lauf des Shop-Analysten. Vorher die CSV-Exporte hochladen und die IDs eintragen:
+#   ant beta:files upload --file gumroad-sales.csv --transform id -r
+#   ant beta:files upload --file etsy-orders.csv --transform id -r
+# Dann IDs aus claude-lock.json eintragen und starten:
+#   ant beta:sessions create --transform id -r < managed-agents/shop-analyst/session.yaml
+agent: YOUR_AGENT_ID
+environment_id: YOUR_ENVIRONMENT_ID
+budget: {type: limit, max_list_cost: {currency: USD, amount: "50"}}   # in Cent: "50" = 0,50 $
+resources:
+  - {type: file, file_id: YOUR_GUMROAD_FILE_ID, mount_path: /gumroad-sales.csv}
+  - {type: file, file_id: YOUR_ETSY_FILE_ID, mount_path: /etsy-orders.csv}
+initial_events:
+  - type: user.message
+    content:
+      - type: text
+        text: |
+          Werte die Verkaufs-Exporte unter /mnt/session/uploads/ aus.
+          Mich interessiert vor allem: Welche Produkte tragen den Umsatz, und was soll ich als Nächstes bauen oder ändern?
+  - type: user.define_outcome
+    description: Der Shop-Bericht zu den hochgeladenen Exporten in /mnt/session/outputs/.
+    max_iterations: 2
+    rubric:
+      type: text
+      content: |
+        # Starter-Rubrik – an den eigenen Anspruch anpassen
+        1. In /mnt/session/outputs/ liegen shop-bericht.md, kennzahlen.csv, umsatz-verlauf.png und produkte.png.
+        2. Der Bericht beginnt mit drei Erkenntnissen, jede mit mindestens einer Zahl.
+        3. Der Bericht nennt für jede hochgeladene Datei den Zeitraum und die Zeilenzahl.
+        4. Jede Produktzeile im Bericht steht mit denselben Werten in kennzahlen.csv.
+        5. Verschiedene Währungen sind getrennt ausgewiesen, nie addiert.
+        6. Der Bericht enthält drei nächste Schritte, jeder mit der Zahl, auf der er beruht, und einer Messgröße für danach.
+        7. Keine Ausgabe enthält Namen, E-Mail-Adressen oder Anschriften von Käufern.
+        8. Bei weniger als 30 Verkäufen im Zeitraum steht die Fallzahl bei jeder Aussage, und der Bericht nennt die Unsicherheit.

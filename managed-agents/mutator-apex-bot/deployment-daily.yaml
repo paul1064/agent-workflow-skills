@@ -1,0 +1,34 @@
+# Täglicher Lauf von MutatorApexBot. Jeder Lauf ist eine neue Session mit eigener Kostengrenze.
+name: mutator-apex-daily
+agent: ./agent.md
+environment_id: ./environment.yaml
+vault_ids: []          # nach dem ersten ant apply die vlt_...-ID aus claude-lock.json eintragen
+resources:
+  - path: ./memory_store-magic-ledger.yaml
+    access: read_write
+budget: {type: limit, max_list_cost: {currency: USD, amount: "150"}}   # in Cent: "150" = 1,50 $ pro Lauf
+schedule:
+  type: cron
+  expression: "17 5 * * *"   # jeden Tag um 05:17
+  timezone: Europe/Vienna
+initial_events:
+  - type: user.define_outcome
+    description: |
+      Repository: paul1064/ai-agents-factory (Standard-Branch).
+      Verbessere das Projekt um einen geprüften Schritt und liefere die heutige MagicNNN.zip in /mnt/session/outputs/.
+    max_iterations: 2
+    rubric:
+      type: text
+      content: |
+        # Starter-Rubrik – an den eigenen Anspruch anpassen
+        Konnte das Repository nicht abgerufen werden, gilt nur Punkt 0. Sonst gelten die Punkte 1 bis 9.
+        0. In /mnt/session/outputs/ liegt FEHLER.md mit HTTP-Status und Fehlertext, und sonst nichts.
+        1. In /mnt/session/outputs/ liegt genau eine Datei MagicNNN.zip; NNN ist dreistellig und folgt lückenlos auf die Nummer des vorherigen Laufs in /mnt/memory/magic-ledger/ledger.md (001, wenn es der erste Lauf ist).
+        2. Die Zip enthält den Ordner MagicNNN/ mit REPORT.md.
+        3. REPORT.md nennt den gewählten Engpass, die Commit-Kennung der Basis und einen Messwert vorher und nachher samt den Befehlen, mit denen er entstand.
+        4. Enthält die Zip eine Änderung, dann liegen changes.patch und files/ bei, und der Patch lässt sich mit git apply --check auf die Basis anwenden.
+        5. Enthält die Zip eine Änderung, dann bestehen nach ihr alle Prüfungen, die vorher bestanden haben; REPORT.md führt sie auf.
+        6. Enthält die Zip keine Änderung, dann erklärt REPORT.md, was versucht wurde und woran es scheiterte.
+        7. Die Änderung entfernt oder schwächt keine Authentifizierung, Schwärzung von Geheimnissen oder Schutzprüfung und enthält keine Platzhalter oder TODO-Stümpfe.
+        8. Weder die Zip noch das Gedächtnis enthält den Wert eines Schlüssels oder Tokens.
+        9. ledger.md hat einen neuen Eintrag für NNN mit Titel, geänderten Dateien, Messwerten und verworfenen Kandidaten.

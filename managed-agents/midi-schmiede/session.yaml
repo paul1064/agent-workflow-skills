@@ -1,0 +1,28 @@
+# Ein Lauf der MIDI-Schmiede. IDs aus claude-lock.json eintragen, Brief anpassen, dann:
+#   ant beta:sessions create --transform id -r < managed-agents/midi-schmiede/session.yaml
+agent: YOUR_AGENT_ID
+environment_id: YOUR_ENVIRONMENT_ID
+budget: {type: limit, max_list_cost: {currency: USD, amount: "100"}}   # in Cent: "100" = 1,00 $
+initial_events:
+  - type: user.message
+    content:
+      - type: text
+        text: |
+          Brief: Paket „acid-nacht-01“. 150 BPM, A-Moll.
+          8 Acid-Lines (1 Takt), 4 Motive (2 Takte), 4 Drum-Patterns (1 Takt).
+          Die Acid-Lines sollen von sparsam bis dicht reichen.
+  - type: user.define_outcome
+    description: Das MIDI-Paket aus dem Brief als eine Zip-Datei in /mnt/session/outputs/.
+    max_iterations: 2
+    rubric:
+      type: text
+      content: |
+        # Starter-Rubrik – an den eigenen Anspruch anpassen
+        1. In /mnt/session/outputs/ liegt genau eine Zip-Datei, benannt nach dem Paketnamen aus dem Brief.
+        2. Die Zip enthält pro verlangter Kategorie einen Ordner mit genau der verlangten Anzahl .mid-Dateien.
+        3. Jede .mid-Datei lässt sich mit mido laden, hat eine Spur und ist genau so viele ganze Takte lang, wie der Brief verlangt.
+        4. Jede Note hat ein Note-Off, und keine Note liegt außerhalb des im Systemprompt genannten Bereichs ihrer Kategorie.
+        5. Keine zwei Dateien einer Kategorie haben dieselbe Notenfolge.
+        6. Jede Acid-Line enthält mindestens einen Slide (überlappende Noten) und mindestens einen Akzent (Velocity ab 110).
+        7. Die Zip enthält ein README.md mit einer Tabellenzeile pro Datei (Takte, Tonart, BPM, Notenzahl, Charakter) und den getroffenen Annahmen.
+        8. Das README behauptet nirgends, dass etwas gut klingt.

@@ -1,0 +1,7 @@
+# Cloud-Sandbox ohne Internetzugang, nur Paketquellen (für pandas und matplotlib).
+name: shop-analyst-env
+config:
+  type: cloud
+  networking:
+    type: limited
+    allow_package_managers: true

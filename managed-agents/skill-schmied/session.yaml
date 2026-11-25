@@ -1,0 +1,30 @@
+# Ein Lauf des Skill-Schmieds. IDs aus claude-lock.json eintragen, Notizen einfügen, dann:
+#   ant beta:sessions create --transform id -r < managed-agents/skill-schmied/session.yaml
+agent: YOUR_AGENT_ID
+environment_id: YOUR_ENVIRONMENT_ID
+budget: {type: limit, max_list_cost: {currency: USD, amount: "250"}}   # in Cent: "250" = 2,50 $
+initial_events:
+  - type: user.message
+    content:
+      - type: text
+        text: |
+          Repository: paul1064/agent-workflow-skills
+
+          Notizen für den neuen Skill – bitte durch die echten Notizen ersetzen:
+          YOUR_NOTES
+  - type: user.define_outcome
+    description: Ein neuer Skill aus den Notizen, passend zum genannten Repository, als Zip mit Patch in /mnt/session/outputs/.
+    max_iterations: 2
+    rubric:
+      type: text
+      content: |
+        # Starter-Rubrik – an den eigenen Anspruch anpassen
+        1. In /mnt/session/outputs/ liegt genau eine Zip-Datei mit SUMMARY.md, changes.patch und dem Ordner files/.
+        2. files/ enthält skills/<name>/SKILL.md; das Frontmatter ist gültiges YAML mit name und description, und name ist gleich dem Ordnernamen.
+        3. Die description nennt, was der Skill tut, wann man ihn nutzt, und Stichworte zum Auslösen.
+        4. Sprache, Gliederung und Frontmatter-Felder folgen den vorhandenen Skills des Repositorys.
+        5. Jede Regel im Skill lässt sich auf eine Stelle in den Notizen zurückführen; allgemeine Ratschläge ohne Bezug zu den Notizen fehlen.
+        6. Der Skill enthält keine Personen- oder Kundennamen, E-Mail-Adressen, Schlüssel, Tokens oder lokalen Pfade.
+        7. README und Manifeste sind so nachgeführt, wie das Repository es bei früheren Skills getan hat; beide Manifeste sind gültiges JSON.
+        8. changes.patch lässt sich mit git apply --check auf einen frischen Klon des in SUMMARY.md genannten Basis-Commits anwenden.
+        9. SUMMARY.md nennt den Basis-Commit und erklärt das Einspielen.

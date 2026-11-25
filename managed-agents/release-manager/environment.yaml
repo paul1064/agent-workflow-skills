@@ -1,0 +1,6 @@
+# Cloud-Sandbox ganz ohne Internetzugang: Das Kit entsteht nur aus dem Brief.
+name: release-manager-env
+config:
+  type: cloud
+  networking:
+    type: limited

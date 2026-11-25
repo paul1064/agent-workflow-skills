@@ -1,0 +1,3 @@
+# Nur der Behälter. Das GitHub-Token trägst du selbst im Terminal ein (siehe ../README.md), es steht nie in einer Datei.
+type: vault
+display_name: mutator-apex-bot

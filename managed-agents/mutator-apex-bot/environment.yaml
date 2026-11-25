@@ -1,0 +1,10 @@
+# Cloud-Sandbox: nur die zwei GitHub-Hosts für den Tarball-Abruf und Paketquellen (für Tests des Projekts).
+name: mutator-apex-bot-env
+config:
+  type: cloud
+  networking:
+    type: limited
+    allow_package_managers: true
+    allowed_hosts:
+      - api.github.com
+      - codeload.github.com

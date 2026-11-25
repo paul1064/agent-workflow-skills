@@ -1,0 +1,9 @@
+# Cloud-Sandbox: nur github.com (zum Klonen des öffentlichen Repositorys) und Paketquellen.
+name: skill-schmied-env
+config:
+  type: cloud
+  networking:
+    type: limited
+    allow_package_managers: true
+    allowed_hosts:
+      - github.com
