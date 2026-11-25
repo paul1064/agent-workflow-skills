@@ -1,14 +1,15 @@
 # agent-workflow-skills
 
-Drei Skills für Claude Code, die agentisches Arbeiten schneller und sicherer machen. Entstanden aus echten Durchläufen eines verschlüsselten Web-Rätsels, nicht aus Theorie.
+Skills für Claude Code, die agentisches Arbeiten schneller und sicherer machen – drei davon entstanden aus echten Durchläufen eines verschlüsselten Web-Rätsels, nicht aus Theorie – plus ein Co-Producer für Ableton Live.
 
-*Three Claude Code skills for faster, safer agentic work. Skill text is German; trigger keywords work in English too.*
+*Claude Code skills for faster, safer agentic work, plus an Ableton Live co-producer. Skill text is German; trigger keywords work in English too.*
 
 | Skill | Wofür | Kern |
 |---|---|---|
 | `oracle-first-exploration` | Langsame oder undurchsichtige Systeme erkunden (UI, API, Rätsel, Config-Labyrinth) | Entscheidungslogik als schnelles Headless-Orakel nachbauen, per BFS durchsuchen, einmal im Echtsystem gegenprüfen. Enthält `explore.mjs` (Node ≥ 18, keine Abhängigkeiten). |
 | `goal-signal-check` | Jede mehrstufige Aufgabe | Checkliste: Ziel und Schreibrechte klären, messbares Erfolgssignal festlegen, Köder und Sackgassen erkennen, vor „fertig“ gegenprüfen. |
 | `scale-it` | Projekt um Faktor n vergrößern: `/scale-it -10` | Ausgangslage messen, Engpass zuerst, in geprüften Wellen bauen (Fundament → Engpass → Masse → Effizienz), erreichten Faktor mit Beleg melden. |
+| `mc-claude-ableton` | Co-Producer in Ableton Live: `/mc-claude-ableton live` oder `autonom` | LIVE: kleine, umkehrbare Änderungen, während du spielst. AUTONOM: Plan, Wellen mit Read-back, versioniertes Set, Bericht. Braucht Ableton-Tools (z. B. MCP-Server). Auch als Agent-SDK-System-Prompt nutzbar. |
 
 ## Installieren
 
@@ -20,7 +21,7 @@ claude plugin marketplace add paul1064/agent-workflow-skills
 claude plugin install agent-workflow-skills@agent-workflow-skills
 ```
 
-Danach lädt Claude die Skills automatisch, wenn die Aufgabe passt, oder direkt per `/agent-workflow-skills:oracle-first-exploration` bzw. `/agent-workflow-skills:goal-signal-check`. Skalieren: `/agent-workflow-skills:scale-it -10`.
+Danach lädt Claude die Skills automatisch, wenn die Aufgabe passt, oder direkt per `/agent-workflow-skills:oracle-first-exploration` bzw. `/agent-workflow-skills:goal-signal-check`. Skalieren: `/agent-workflow-skills:scale-it -10`. Ableton: `/agent-workflow-skills:mc-claude-ableton live`.
 
 ## Explorer ausprobieren
 
