@@ -4,13 +4,13 @@
     "name": "Paul"
   },
   "metadata": {
-    "description": "Claude Code skills for faster, safer agentic work: oracle-first exploration and goal/signal checks."
+    "description": "Claude Code skills for faster, safer agentic work: oracle-first exploration, goal/signal checks, scaling, and an Ableton Live co-producer."
   },
   "plugins": [
     {
       "name": "agent-workflow-skills",
       "source": "./",
-      "description": "Oracle-first exploration and goal/signal checks for agentic workflows."
+      "description": "Oracle-first exploration, goal/signal checks, scaling and an Ableton Live co-producer for agentic workflows."
     }
   ]
 }
