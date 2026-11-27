@@ -9,6 +9,7 @@ Skills für Claude Code, die agentisches Arbeiten schneller und sicherer machen 
 | `oracle-first-exploration` | Langsame oder undurchsichtige Systeme erkunden (UI, API, Rätsel, Config-Labyrinth) | Entscheidungslogik als schnelles Headless-Orakel nachbauen, per BFS durchsuchen, einmal im Echtsystem gegenprüfen. Enthält `explore.mjs` (Node ≥ 18, keine Abhängigkeiten). |
 | `goal-signal-check` | Jede mehrstufige Aufgabe | Checkliste: Ziel und Schreibrechte klären, messbares Erfolgssignal festlegen, Köder und Sackgassen erkennen, vor „fertig“ gegenprüfen. |
 | `scale-it` | Projekt um Faktor n vergrößern: `/scale-it -10` | Ausgangslage messen, Engpass zuerst, in geprüften Wellen bauen (Fundament → Engpass → Masse → Effizienz), erreichten Faktor mit Beleg melden. |
+| `razz` | Viele kleine Korrekturen über mehrere Repos in einem Durchlauf: `/razz <Liste>` | Punkte sortieren (machbar, braucht Angaben, nur der Mensch), pro Repo ein Branch und ein Entwurfs-PR, ein Commit pro Punkt mit Beleg, nie direkt auf den Default-Branch. |
 | `mc-claude-ableton` | Co-Producer in Ableton Live: `/mc-claude-ableton live` oder `autonom` | LIVE: kleine, umkehrbare Änderungen, während du spielst. AUTONOM: Plan, Wellen mit Read-back, versioniertes Set, Bericht. Braucht Ableton-Tools (z. B. MCP-Server). Auch als Agent-SDK-System-Prompt nutzbar. |
 
 ## Installieren
@@ -41,6 +42,12 @@ An einem Web-Rätsel mit verschlüsseltem Tresor (~200 Einträge, PBKDF2) und Zu
 - 4⁴-Wegelabyrinth: 0,3 s statt bis zu 256 Handversuchen.
 - 9-Schritt-Pfad zum versteckten Endlevel: 1,4 s mit dem generischen Explorer.
 - Erkannt: ein Köder (Hinweis führt zu lesbarem Klartext ohne Wirkung) und eine Schleife mit 10¹⁵ Runden ohne Belohnung.
+
+## Gemini / Antigravity
+
+`razz` liegt zusätzlich unter [`.agents/skills/razz/SKILL.md`](.agents/skills/razz/SKILL.md), wortgleich mit der Claude-Fassung. Antigravity findet den Skill dort, sobald dieses Repo der Arbeitsbereich ist. Für andere Arbeitsbereiche den Ordner `razz` in deren `.agents/skills/` kopieren. Wer `skills/razz/SKILL.md` ändert, kopiert die Datei danach erneut.
+
+Ein fertiger Auftrag als Beispiel: [`skills/razz/examples/github-audit-2026-11.md`](skills/razz/examples/github-audit-2026-11.md).
 
 ## Grok-Varianten
 

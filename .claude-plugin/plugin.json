@@ -1,7 +1,7 @@
 {
   "name": "agent-workflow-skills",
-  "version": "0.4.0",
-  "description": "Four skills that make agentic work faster and safer: explore slow systems through a fast headless oracle with BFS search and trap detection, and check goal, scope and success signal before, during and after a task, and scale a project by a factor n in measured, verified waves, and work as a co-producer in Ableton Live, live alongside the artist or autonomously from a brief.",
+  "version": "0.5.0",
+  "description": "Five skills that make agentic work faster and safer: explore slow systems through a fast headless oracle with BFS search and trap detection, and check goal, scope and success signal before, during and after a task, and scale a project by a factor n in measured, verified waves, and work as a co-producer in Ableton Live, live alongside the artist or autonomously from a brief, and work through a numbered list of fixes across several repositories in one pass, one draft pull request per repository.",
   "author": {
     "name": "Paul"
   },
@@ -19,6 +19,8 @@
     "scaling",
     "ableton",
     "music-production",
-    "co-producer"
+    "co-producer",
+    "batch-fix",
+    "pull-requests"
   ]
 }
